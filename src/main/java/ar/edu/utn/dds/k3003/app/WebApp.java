@@ -35,17 +35,6 @@ public class WebApp {
         //E3
         startEntityManagerFactory();
 
-
-        //e4
-        final var metricsUtils = new DDMetricsUtils("logistica");
-        final var registry = metricsUtils.getRegistry();
-
-        //Metricas
-        final var myGauge = registry.gauge("dds.unGauge", new AtomicInteger(0));
-
-        //Config
-        final var micrometerPlugin = new MicrometerPlugin(config -> config.registry = registry);
-
         var env = System.getenv();
         var objectMapper = createObjectMapper();
         var fachada = new Fachada(entityManagerFactory);
@@ -58,11 +47,7 @@ public class WebApp {
             config.jsonMapper(new JavalinJackson().updateMapper(mapper -> {
                 configureObjectMapper(mapper);
             }));
-            config.registerPlugin(micrometerPlugin);
         }).start(port);
-
-        myGauge.set(100);
-        registry.counter("dds.transferencias","status","ok").increment();
 
         var rutaController = new RutaController(fachada);
         var trasladosController = new TrasladoController(fachada);
