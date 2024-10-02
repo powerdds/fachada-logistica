@@ -25,19 +25,53 @@ import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicInteger;
 import io.javalin.http.HttpStatus;
 import io.javalin.micrometer.MicrometerPlugin;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.Meter;
+import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics;
+import io.micrometer.core.instrument.binder.jvm.JvmHeapPressureMetrics;
+import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics;
+import io.micrometer.core.instrument.binder.system.FileDescriptorMetrics;
+import io.micrometer.core.instrument.binder.system.ProcessorMetrics;
+import io.micrometer.prometheusmetrics.PrometheusConfig;
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class WebApp {
 //nuevo
     public static EntityManagerFactory entityManagerFactory;
+    public static final String TOKEN = System.getenv("grafanaToken");
     public static void main(String[] args) {
         //E3
         startEntityManagerFactory();
-
+        //E4 ahora grafana
+        final var registry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
+        //
         var env = System.getenv();
         var objectMapper = createObjectMapper();
         var fachada = new Fachada(entityManagerFactory);
+
+        //e4
+        registry.config().commonTags("app", "metrics-sample");
+        //metricas jvm
+        try (var jvmGcMetrics = new JvmGcMetrics();
+             var jvmHeapPressureMetrics = new JvmHeapPressureMetrics()){
+            jvmGcMetrics.bindTo(registry);
+            jvmHeapPressureMetrics.bindTo(registry);
+        }
+        new JvmMemoryMetrics().bindTo(registry);
+        new ProcessorMetrics().bindTo(registry);
+        new FileDescriptorMetrics().bindTo(registry);
+
+        //metricas custom
+        Counter rutasCounter = Counter.builder("rutas_creadas")
+                        .description("Total de rutas validas creadas")
+                        .register(registry);
+
+        //Se setea el registro dentro de la config de Micrometer
+        final var micrometerPlugin = new MicrometerPlugin(config -> config.registry = registry);
+
         fachada.setViandasProxy(new ViandasProxy(objectMapper));
         fachada.setHeladerasProxy(new HeladerasProxy(objectMapper));
 
@@ -47,9 +81,10 @@ public class WebApp {
             config.jsonMapper(new JavalinJackson().updateMapper(mapper -> {
                 configureObjectMapper(mapper);
             }));
+            config.registerPlugin(micrometerPlugin); //esto para la webapp
         }).start(port);
 
-        var rutaController = new RutaController(fachada);
+        var rutaController = new RutaController(fachada, rutasCounter);
         var trasladosController = new TrasladoController(fachada);
         var dbController = new DBController(fachada);
 
@@ -61,6 +96,20 @@ public class WebApp {
        app.delete("/cleanup" , dbController::eliminarDB);
        app.post("/retirarTraslado/{id}" , trasladosController::retirarTraslado);
        app.post("/depositarTraslado/{id}" , trasladosController::depositarTraslado);
+       //endpoint para grafana
+        app.get("/metrics",
+                ctx -> {
+                //Chequea el header de autorizacion y chequea el token bearer
+                var auth = ctx.header("Authorization");
+
+                if(auth != null && auth.intern() == "Bearer " + TOKEN){
+                    ctx.contentType("text/plain; version=0.0.4")
+                            .result(registry.scrape());
+                } else {
+                    //El token no es apropiado, devuelve error, paso necesario para grafana
+                    ctx.status(401).json("unauthorized access");
+                }
+                });
     }
 
     //nuevo metodo
