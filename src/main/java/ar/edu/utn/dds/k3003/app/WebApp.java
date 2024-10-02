@@ -41,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 public class WebApp {
 //nuevo
     public static EntityManagerFactory entityManagerFactory;
-    public static final String TOKEN = System.getenv("grafanaToken");
+    public static final String TOKEN = "LogisticaToken";
     public static void main(String[] args) {
         //E3
         startEntityManagerFactory();
