@@ -99,17 +99,22 @@ public class WebApp {
        //endpoint para grafana
         app.get("/metrics",
                 ctx -> {
-                //Chequea el header de autorizacion y chequea el token bearer
-                var auth = ctx.header("Authorization");
+                    // chequear el header de authorization y chequear el token bearer
+                    // configurado
+                    var auth = ctx.header("Authorization");
 
-                if(auth != null && auth.intern() == "Bearer " + TOKEN){
-                    ctx.contentType("text/plain; version=0.0.4")
-                            .result(registry.scrape());
-                } else {
-                    //El token no es apropiado, devuelve error, paso necesario para grafana
-                    ctx.status(401).json("unauthorized access");
-                }
+                    if (auth != null && auth.intern() == "Bearer " + TOKEN) {
+                        ctx.contentType("text/plain; version=0.0.4")
+                                .result(registry.scrape());
+                    } else {
+                        // si el token no es el apropiado, devolver error,
+                        // desautorizado
+                        // este paso es necesario para que Grafana online
+                        // permita el acceso
+                        ctx.status(401).json("unauthorized access");
+                    }
                 });
+    }
     }
 
     //nuevo metodo
