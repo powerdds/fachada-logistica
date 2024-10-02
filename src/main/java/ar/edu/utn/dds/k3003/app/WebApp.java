@@ -115,7 +115,7 @@ public class WebApp {
                     }
                 });
     }
-    }
+
 
     //nuevo metodo
     public static void startEntityManagerFactory(){
