@@ -8,6 +8,11 @@ import ar.edu.utn.dds.k3003.facades.exceptions.TrasladoNoAsignableException;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
+import io.javalin.micrometer.MicrometerPlugin;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.prometheusmetrics.PrometheusConfig;
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry;
 
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
@@ -16,13 +21,28 @@ public class TrasladoController {
 
     private final Fachada fachada;
 
-    public TrasladoController(Fachada fachada) {
+    //metrica
+    private Counter trasladosAsignadosCounter;
+
+    public TrasladoController(Fachada fachada, Counter trasladosAsignadosCounter) {
+
         this.fachada = fachada;
+        this.trasladosAsignadosCounter = trasladosAsignadosCounter;
     }
 
     public void asignar(Context context) {
+        final var registry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
         try {
             var trasladoDTO = this.fachada.asignarTraslado(context.bodyAsClass(TrasladoDTO.class));
+
+            registry.config().commonTags("app", "metrics-sample");
+            Gauge.builder("traslados-asignados", ()-> (int)(1*1000))
+                    .description("traslados asignados para mover las viandas")
+                    .strongReference(true)
+                    .register(registry);
+            new MicrometerPlugin(config -> config.registry = registry);
+            trasladosAsignadosCounter.increment();
+
             context.json(trasladoDTO);
         } catch (TrasladoNoAsignableException | NoSuchElementException e) {
             context.result(e.getLocalizedMessage());

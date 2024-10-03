@@ -22,12 +22,14 @@ public class RutaController {
     //Metrica
     private Counter rutasCounter;
 
-    //instancia StatsDClient
+    //instancia StatsDClient es de Datadog, ni idea para que lo metí, lo dejo por si sucede algo en el futuro
+    /*
     private static final StatsDClient statsd = new NonBlockingStatsDClient(
             "my.prefix",                  // Prefijo para las métricas
             "localhost",                  // Dirección del agente Datadog
             8125           // Puerto donde escucha el agente
     );
+    */
     public RutaController(Fachada fachada, Counter rutasCounter) {
         this.fachada = fachada;
         this.rutasCounter = rutasCounter;

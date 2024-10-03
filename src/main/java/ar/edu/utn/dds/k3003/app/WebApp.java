@@ -69,6 +69,10 @@ public class WebApp {
                         .description("Total de rutas validas creadas")
                         .register(registry);
 
+        Counter trasladosAsignadosCounter = Counter.builder("traslados-asignados")
+                    .description("Total de traslados asignados")
+                    .register(registry);
+
         //Se setea el registro dentro de la config de Micrometer
         final var micrometerPlugin = new MicrometerPlugin(config -> config.registry = registry);
 
@@ -85,7 +89,7 @@ public class WebApp {
         }).start(port);
 
         var rutaController = new RutaController(fachada, rutasCounter);
-        var trasladosController = new TrasladoController(fachada);
+        var trasladosController = new TrasladoController(fachada, trasladosAsignadosCounter);
         var dbController = new DBController(fachada);
 
         app.post("/rutas", rutaController::agregar);
