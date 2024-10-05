@@ -83,15 +83,15 @@ public class WebApp {
         fachada.setViandasProxy(new ViandasProxy(objectMapper));
         fachada.setHeladerasProxy(new HeladerasProxy(objectMapper));
 
-        var port = Integer.parseInt(env.getOrDefault("PORT", "8080"));
+        //var port = Integer.parseInt(env.getOrDefault("PORT", "8080"));
 
         var app = Javalin.create(config -> {
             config.jsonMapper(new JavalinJackson().updateMapper(mapper -> {
                 configureObjectMapper(mapper);
             }));
             config.registerPlugin(micrometerPlugin); //esto para la webapp
-        }).start(port);
-
+        }).start();
+        //antes estaba port dentro de start
         var rutaController = new RutaController(fachada, rutasCounter);
         var trasladosController = new TrasladoController(fachada, trasladosAsignadosCounter, cambioDeEstadoTrasladoCounter);
         var dbController = new DBController(fachada);
