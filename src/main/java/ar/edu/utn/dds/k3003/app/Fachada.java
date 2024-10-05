@@ -146,8 +146,8 @@ public class Fachada implements ar.edu.utn.dds.k3003.facades.FachadaLogistica {
 
         fachadaHeladeras.retirar(retiroDTO);
 
-        //Esto de viandas capaz va, capaz no, a checkear.
-        fachadaViandas.modificarEstado(trasladoBuscado.getQrVianda(), EstadoViandaEnum.EN_TRASLADO);
+        //Esto de viandas capaz va, capaz no, a checkear. LO HACE HELADERAS.
+        //fachadaViandas.modificarEstado(trasladoBuscado.getQrVianda(), EstadoViandaEnum.EN_TRASLADO);
 
         trasladoRepository.getEntityManager().getTransaction().commit();
         trasladoRepository.getEntityManager().close();
@@ -179,8 +179,8 @@ public class Fachada implements ar.edu.utn.dds.k3003.facades.FachadaLogistica {
 
         fachadaHeladeras.depositar(trasladoTerminado.getHeladeraDestino(), trasladoTerminado.getQrVianda());
 
-        //Esto como en traslado retirado, podria ir, o no, a checkear.
-        fachadaViandas.modificarEstado(trasladoTerminado.getQrVianda(),EstadoViandaEnum.DEPOSITADA);
+        //Esto como en traslado retirado, podria ir, o no, a checkear. Lo hace HELADERAS.
+        //fachadaViandas.modificarEstado(trasladoTerminado.getQrVianda(),EstadoViandaEnum.DEPOSITADA);
 
         fachadaViandas.modificarHeladera(trasladoTerminado.getQrVianda(),trasladoTerminado.getHeladeraDestino());
         trasladoRepository.getEntityManager().getTransaction().commit();
