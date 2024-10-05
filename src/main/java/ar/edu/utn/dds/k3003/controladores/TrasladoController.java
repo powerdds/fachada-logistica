@@ -24,10 +24,13 @@ public class TrasladoController {
     //metrica
     private Counter trasladosAsignadosCounter;
 
-    public TrasladoController(Fachada fachada, Counter trasladosAsignadosCounter) {
+    private Counter cambioDeEstadoCounter;
+
+    public TrasladoController(Fachada fachada, Counter trasladosAsignadosCounter, Counter cambioDeEstadoCounter) {
 
         this.fachada = fachada;
         this.trasladosAsignadosCounter = trasladosAsignadosCounter;
+        this.cambioDeEstadoCounter = cambioDeEstadoCounter;
     }
 
     public void asignar(Context context) {
@@ -89,9 +92,19 @@ public class TrasladoController {
      */
 
     public void cambiarEstado(Context context){
+        final var registry = new PrometheusMeterRegistry(PrometheusConfig.DEFAULT);
         var id = context.pathParamAsClass("id",Long.class).get();
         EstadoTrasladoEnum nuevoEstado = context.bodyAsClass(EstadoTrasladoEnum.class);
         fachada.modificarEstadoTraslado(id, nuevoEstado);
+
+        registry.config().commonTags("app", "metrics-sample");
+        Gauge.builder("cambios-estado-traslado", ()-> (int)(1*1000))
+                .description("cambios de estado registrados en los traslados")
+                .strongReference(true)
+                .register(registry);
+        new MicrometerPlugin(config -> config.registry = registry);
+
+        trasladosAsignadosCounter.increment();
         context.result("Estado del traslado modificado");
     }
 
