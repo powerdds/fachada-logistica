@@ -64,6 +64,10 @@ public class TrasladoController {
         }
     }
 
+    public void obtenerTodos(Context context){
+
+    }
+
     public void trasladosColaborador(Context context){
         //var id = context.pathParamAsClass("colaboradorId", Long.class).get();
         var id = context.queryParamAsClass("colaboradorId", Long.class).get();

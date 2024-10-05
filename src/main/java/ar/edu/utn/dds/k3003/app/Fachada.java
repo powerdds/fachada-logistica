@@ -135,9 +135,9 @@ public class Fachada implements ar.edu.utn.dds.k3003.facades.FachadaLogistica {
     }
     @Override
     public void trasladoRetirado(Long trasladoId){
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        trasladoRepository.setEntityManager(entityManager);
-        trasladoRepository.getEntityManager().getTransaction().begin();
+        //EntityManager entityManager = entityManagerFactory.createEntityManager();
+        //trasladoRepository.setEntityManager(entityManager);
+        //trasladoRepository.getEntityManager().getTransaction().begin();
         TrasladoDTO trasladoBuscado = this.buscarXId(trasladoId);
 
         Ruta rutaDeTraslado = new Ruta(trasladoBuscado.getColaboradorId(), trasladoBuscado.getHeladeraOrigen(), trasladoBuscado.getHeladeraDestino());
@@ -149,8 +149,8 @@ public class Fachada implements ar.edu.utn.dds.k3003.facades.FachadaLogistica {
         //Esto de viandas capaz va, capaz no, a checkear. LO HACE HELADERAS.
         //fachadaViandas.modificarEstado(trasladoBuscado.getQrVianda(), EstadoViandaEnum.EN_TRASLADO);
 
-        trasladoRepository.getEntityManager().getTransaction().commit();
-        trasladoRepository.getEntityManager().close();
+        //trasladoRepository.getEntityManager().getTransaction().commit();
+        //trasladoRepository.getEntityManager().close();
 
         this.modificarEstadoTraslado(trasladoId, EstadoTrasladoEnum.EN_VIAJE);
         /*

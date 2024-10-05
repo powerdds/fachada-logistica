@@ -100,6 +100,7 @@ public class WebApp {
         app.post("/traslados", trasladosController::asignar);
         app.get("/traslados/search/findByColaboradorId", trasladosController::trasladosColaborador);
         app.get("/traslados/{id}", trasladosController::obtener);
+        app.get("/traslados", trasladosController::obtenerTodos);
         app.patch("/traslados/{id}", trasladosController::cambiarEstado);
        app.delete("/cleanup" , dbController::eliminarDB);
        app.post("/retirarTraslado/{id}" , trasladosController::retirarTraslado);
