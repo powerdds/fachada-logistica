@@ -3,6 +3,7 @@ package ar.edu.utn.dds.k3003.app;
 import ar.edu.utn.dds.k3003.clientes.HeladerasProxy;
 import ar.edu.utn.dds.k3003.clientes.ViandasProxy;
 import ar.edu.utn.dds.k3003.controladores.DBController;
+import ar.edu.utn.dds.k3003.controladores.IncidenteController;
 import ar.edu.utn.dds.k3003.controladores.RutaController;
 import ar.edu.utn.dds.k3003.controladores.TrasladoController;
 import ar.edu.utn.dds.k3003.facades.dtos.Constants;
@@ -95,6 +96,7 @@ public class WebApp {
         var rutaController = new RutaController(fachada, rutasCounter);
         var trasladosController = new TrasladoController(fachada, trasladosAsignadosCounter, cambioDeEstadoTrasladoCounter);
         var dbController = new DBController(fachada);
+        var incidenteController = new IncidenteController(fachada);
 
         app.post("/rutas", rutaController::agregar);
         app.post("/traslados", trasladosController::asignar);
@@ -105,6 +107,7 @@ public class WebApp {
        app.delete("/cleanup" , dbController::eliminarDB);
        app.post("/retirarTraslado/{id}" , trasladosController::retirarTraslado);
        app.post("/depositarTraslado/{id}" , trasladosController::depositarTraslado);
+       app.post("/reportarAlerta", incidenteController::armarAlerta);
        //endpoint para grafana
         app.get("/metrics",
                 ctx -> {
