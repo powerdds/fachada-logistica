@@ -164,14 +164,14 @@ public class Fachada implements ar.edu.utn.dds.k3003.facades.FachadaLogistica {
 
     @Override
     public void trasladoDepositado(Long trasladoId){
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-        trasladoRepository.setEntityManager(entityManager);
-        trasladoRepository.getEntityManager().getTransaction().begin();
+        //EntityManager entityManager = entityManagerFactory.createEntityManager();
+        //trasladoRepository.setEntityManager(entityManager);
+        //trasladoRepository.getEntityManager().getTransaction().begin();
         TrasladoDTO trasladoTerminado = this.buscarXId(trasladoId);
 
         if(!trasladoTerminado.getStatus().equals(EstadoTrasladoEnum.EN_VIAJE)){
-            trasladoRepository.getEntityManager().getTransaction().rollback();
-            trasladoRepository.getEntityManager().close();
+           // trasladoRepository.getEntityManager().getTransaction().rollback();
+           // trasladoRepository.getEntityManager().close();
             throw new NoSuchElementException("La vianda con qr" + trasladoTerminado.getQrVianda() +" aún no fue retirada");
         }
 
@@ -183,8 +183,8 @@ public class Fachada implements ar.edu.utn.dds.k3003.facades.FachadaLogistica {
         //fachadaViandas.modificarEstado(trasladoTerminado.getQrVianda(),EstadoViandaEnum.DEPOSITADA);
 
         fachadaViandas.modificarHeladera(trasladoTerminado.getQrVianda(),trasladoTerminado.getHeladeraDestino());
-        trasladoRepository.getEntityManager().getTransaction().commit();
-        trasladoRepository.getEntityManager().close();
+        //trasladoRepository.getEntityManager().getTransaction().commit();
+        //trasladoRepository.getEntityManager().close();
         this.modificarEstadoTraslado(trasladoId, EstadoTrasladoEnum.ENTREGADO);
         /*
         trasladoRepository.save(new Traslado(trasladoTerminado.getQrVianda(),
