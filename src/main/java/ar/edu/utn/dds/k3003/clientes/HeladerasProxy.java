@@ -65,9 +65,15 @@ public class HeladerasProxy implements FachadaHeladeras {
             execute.body();
             exito = true;
         }
+
+        if (execute.code() == HttpStatus.NOT_FOUND.getCode()) {
+            throw new NoSuchElementException("No se pudo retirar la vianda " + retiroDTO.getQrVianda());
+        }
+        /*
         if (execute.code() == HttpStatus.BAD_REQUEST.getCode()) {
             throw new NoSuchElementException("No se pudo retirar la vianda " + retiroDTO.getQrVianda());
         }
+        */
     }
 
     @Override
