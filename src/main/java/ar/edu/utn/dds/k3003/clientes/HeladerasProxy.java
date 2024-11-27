@@ -66,7 +66,7 @@ public class HeladerasProxy implements FachadaHeladeras {
             exito = true;
         }
 
-        if (execute.code() == HttpStatus.NOT_FOUND.getCode()) {
+        if (execute.code() == 404) {
             throw new NoSuchElementException("No se pudo retirar la vianda " + retiroDTO.getQrVianda());
         }
         /*

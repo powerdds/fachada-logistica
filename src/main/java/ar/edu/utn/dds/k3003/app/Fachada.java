@@ -142,7 +142,7 @@ public class Fachada implements ar.edu.utn.dds.k3003.facades.FachadaLogistica {
 
 
 
-        Ruta rutaDeTraslado = new Ruta(trasladoBuscado.getColaboradorId(), trasladoBuscado.getHeladeraOrigen(), trasladoBuscado.getHeladeraDestino());
+        //Ruta rutaDeTraslado = new Ruta(trasladoBuscado.getColaboradorId(), trasladoBuscado.getHeladeraOrigen(), trasladoBuscado.getHeladeraDestino());
 
         RetiroDTO retiroDTO = new RetiroDTO(trasladoBuscado.getQrVianda(), "321", trasladoBuscado.getHeladeraOrigen());
 
