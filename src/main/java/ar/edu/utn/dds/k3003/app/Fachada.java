@@ -1,5 +1,7 @@
 package ar.edu.utn.dds.k3003.app;
 
+import ar.edu.utn.dds.k3003.clientes.ColaboradoresProxy;
+import ar.edu.utn.dds.k3003.facades.FachadaColaboradores;
 import ar.edu.utn.dds.k3003.facades.FachadaHeladeras;
 import ar.edu.utn.dds.k3003.facades.FachadaViandas;
 import ar.edu.utn.dds.k3003.facades.dtos.*;
@@ -34,6 +36,7 @@ public class Fachada implements ar.edu.utn.dds.k3003.facades.FachadaLogistica {
     private final TrasladoMapper trasladoMapper;
     private FachadaViandas fachadaViandas;
     private FachadaHeladeras fachadaHeladeras;
+    private ColaboradoresProxy fachadaColaboradores;
 
 
     public Fachada(EntityManagerFactory entityManagerFactory){
@@ -98,6 +101,9 @@ public class Fachada implements ar.edu.utn.dds.k3003.facades.FachadaLogistica {
         Traslado trasladoAsignado = new Traslado(trasladoDTO.getQrVianda(), rutasPosibles.get(0), EstadoTrasladoEnum.ASIGNADO, trasladoDTO.getFechaTraslado());
 
         trasladoAsignado = this.trasladoRepository.save(trasladoAsignado);
+
+        //reporteTrasladoAsignadoEntrega6
+        fachadaColaboradores.asignarTraslado(trasladoAsignado.getColaboradorId(), trasladoDTO);
 
         trasladoRepository.getEntityManager().getTransaction().commit();
         trasladoRepository.getEntityManager().close();
@@ -214,5 +220,7 @@ public class Fachada implements ar.edu.utn.dds.k3003.facades.FachadaLogistica {
     public void setViandasProxy(FachadaViandas fachadaViandas){
         this.fachadaViandas = fachadaViandas;
     }
+
+    public void setColaboradoresProxy(ColaboradoresProxy fachadaColaboradores){ this.fachadaColaboradores = fachadaColaboradores; }
 
 }
