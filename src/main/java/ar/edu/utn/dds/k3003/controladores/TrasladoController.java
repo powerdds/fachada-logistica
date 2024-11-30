@@ -57,10 +57,10 @@ public class TrasladoController {
         var id = context.pathParamAsClass("id", Long.class).get();
         try {
             var trasladoDTO = this.fachada.buscarXId(id);
+            context.status(HttpStatus.OK);
             context.json(trasladoDTO);
         } catch (NoSuchElementException ex) {
-            context.result(ex.getLocalizedMessage());
-            context.status(HttpStatus.NOT_FOUND);
+            context.status(404).result("Traslado " + id + "no encontrado" + ex.getMessage());
         }
     }
 
