@@ -103,7 +103,7 @@ public class Fachada implements ar.edu.utn.dds.k3003.facades.FachadaLogistica {
         trasladoAsignado = this.trasladoRepository.save(trasladoAsignado);
 
         //reporteTrasladoAsignadoEntrega6
-        fachadaColaboradores.asignarTraslado(trasladoAsignado.getColaboradorId(), trasladoDTO);
+        fachadaColaboradores.asignarTraslado(trasladoAsignado.getColaboradorId(), trasladoMapper.map(trasladoAsignado));
 
         trasladoRepository.getEntityManager().getTransaction().commit();
         trasladoRepository.getEntityManager().close();
